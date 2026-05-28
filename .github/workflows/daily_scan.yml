@@ -1,0 +1,63 @@
+name: Daily Market Scan
+
+on:
+  schedule:
+    # Run at 8:00 AM UTC = 4:00 PM Beijing Time (after market close)
+    - cron: '0 8 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      trade_date:
+        description: 'Trade date (YYYY-MM-DD)'
+        required: false
+        default: ''
+
+jobs:
+  daily-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd python_worker
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Run daily scan
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+          AKSHARE_MODE: 'free'
+        run: |
+          cd python_worker
+          source venv/bin/activate
+          python main.py --step all --date ${{ inputs.trade_date || 'auto' }}
+
+      - name: Upload job logs
+        if: always()
+        run: |
+          echo "Job completed at $(date)"
+          echo "Status: ${{ job.status }}"
+
+  weekly-report:
+    runs-on: ubuntu-latest
+    needs: daily-scan
+    if: github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate weekly summary
+        run: |
+          echo "Weekly summary for week ending $(date)"
+          # This would generate a summary report from the week's data
