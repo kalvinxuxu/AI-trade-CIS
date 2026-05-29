@@ -52,7 +52,7 @@ export default function ActionRecommendation({ code }: { code: string }) {
     danger: 'text-red-700',
   }
 
-  if (!candidate?.level || candidate.level === 'none') {
+  if (!candidate?.level) {
     return (
       <div className="card text-center py-6">
         <div className="text-gray-400">暂无分层信息</div>
