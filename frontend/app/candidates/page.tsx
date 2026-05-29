@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import CandidateTable from '../components/CandidateTable'
 
-export default function CandidatesPage() {
+function CandidatesContent() {
   const searchParams = useSearchParams()
   const [tradeDate, setTradeDate] = useState(
     new Date().toISOString().split('T')[0]
@@ -76,5 +76,13 @@ export default function CandidatesPage() {
         <CandidateTable tradeDate={tradeDate} levelFilter={levelFilter} />
       </div>
     </main>
+  )
+}
+
+export default function CandidatesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 p-8">加载中...</div>}>
+      <CandidatesContent />
+    </Suspense>
   )
 }
