@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "build": "cd frontend && npm install && npm run build",
-    "dev": "cd frontend && npm run dev"
+    "build": "npm --prefix frontend run build",
+    "dev": "npm --prefix frontend run dev"
   },
   "dependencies": {
     "next": "16.2.6"
