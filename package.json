@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "dev": "cd frontend && npm run dev"
+  },
+  "dependencies": {
+    "next": "16.2.6"
+  },
+  "devDependencies": {}
+}
